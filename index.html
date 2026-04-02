@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flip Clock</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #0a0a0a;
+            overflow: hidden;
+            font-family: 'Century Gothic', 'CenturyGothic', AppleGothic, sans-serif;
+        }
+
+        #particles-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .clock-container {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .flip-unit {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .flip-card {
+            position: relative;
+            width: 75px;
+            height: 110px;
+            perspective: 400px;
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .flip-card-front,
+        .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 50%;
+            overflow: hidden;
+            backface-visibility: hidden;
+        }
+
+        .flip-card-front {
+            top: 0;
+            background: linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%);
+            border-radius: 8px 8px 0 0;
+            border: 1px solid #333;
+            border-bottom: none;
+            box-shadow: 0 -2px 4px rgba(255,255,255,0.05);
+        }
+
+        .flip-card-back {
+            bottom: 0;
+            background: linear-gradient(180deg, #0d0d0d 0%, #1a1a1a 100%);
+            border-radius: 0 0 8px 8px;
+            border: 1px solid #333;
+            border-top: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .flip-card-front .digit,
+        .flip-card-back .digit {
+            position: absolute;
+            width: 100%;
+            height: 200%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 78px;
+            font-weight: 500;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(255,255,255,0.3);
+            letter-spacing: -2px;
+            line-height: 1;
+        }
+
+        .flip-card-front .digit {
+            top: 0;
+        }
+
+        .flip-card-back .digit {
+            bottom: 0;
+        }
+
+        .flip-card-top-flip,
+        .flip-card-bottom-flip {
+            position: absolute;
+            width: 100%;
+            height: 50%;
+            overflow: hidden;
+            backface-visibility: hidden;
+        }
+
+        .flip-card-top-flip {
+            top: 0;
+            background: linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%);
+            border-radius: 8px 8px 0 0;
+            transform-origin: bottom;
+            z-index: 2;
+        }
+
+        .flip-card-bottom-flip {
+            bottom: 0;
+            background: linear-gradient(180deg, #0d0d0d 0%, #1a1a1a 100%);
+            border-radius: 0 0 8px 8px;
+            transform-origin: top;
+            transform: rotateX(90deg);
+            z-index: 2;
+        }
+
+        .flip-card-top-flip .digit,
+        .flip-card-bottom-flip .digit {
+            position: absolute;
+            width: 100%;
+            height: 200%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 78px;
+            font-weight: 500;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(255,255,255,0.3);
+            letter-spacing: -2px;
+            line-height: 1;
+        }
+
+        .flip-card-top-flip .digit {
+            top: 0;
+        }
+
+        .flip-card-bottom-flip .digit {
+            bottom: 0;
+        }
+
+        .flip-animation-top {
+            animation: flipTop 0.3s ease-in forwards;
+        }
+
+        .flip-animation-bottom {
+            animation: flipBottom 0.3s ease-out 0.3s forwards;
+        }
+
+        @keyframes flipTop {
+            0% { transform: rotateX(0deg); }
+            100% { transform: rotateX(-90deg); }
+        }
+
+        @keyframes flipBottom {
+            0% { transform: rotateX(90deg); }
+            100% { transform: rotateX(0deg); }
+        }
+
+        .separator {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            padding: 0 4px;
+        }
+
+        .separator-dot {
+            width: 8px;
+            height: 8px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(255,255,255,0.5);
+            animation: pulse 1s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .unit-label {
+            margin-top: 8px;
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        @media (max-width: 600px) {
+            .flip-card {
+                width: 48px;
+                height: 70px;
+            }
+            .flip-card-front .digit,
+            .flip-card-back .digit,
+            .flip-card-top-flip .digit,
+            .flip-card-bottom-flip .digit {
+                font-size: 52px;
+            }
+            .separator-dot {
+                width: 5px;
+                height: 5px;
+            }
+            .separator {
+                gap: 15px;
+            }
+            .clock-container {
+                gap: 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="particles-canvas"></canvas>
+    
+    <div class="clock-container">
+        <div class="flip-unit">
+            <div class="flip-card" id="hour-tens">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front"><span class="digit">0</span></div>
+                    <div class="flip-card-back"><span class="digit">0</span></div>
+                </div>
+            </div>
+        </div>
+        <div class="flip-unit">
+            <div class="flip-card" id="hour-ones">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front"><span class="digit">0</span></div>
+                    <div class="flip-card-back"><span class="digit">0</span></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="separator">
+            <div class="separator-dot"></div>
+            <div class="separator-dot"></div>
+        </div>
+        
+        <div class="flip-unit">
+            <div class="flip-card" id="minute-tens">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front"><span class="digit">0</span></div>
+                    <div class="flip-card-back"><span class="digit">0</span></div>
+                </div>
+            </div>
+        </div>
+        <div class="flip-unit">
+            <div class="flip-card" id="minute-ones">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front"><span class="digit">0</span></div>
+                    <div class="flip-card-back"><span class="digit">0</span></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="separator">
+            <div class="separator-dot"></div>
+            <div class="separator-dot"></div>
+        </div>
+        
+        <div class="flip-unit">
+            <div class="flip-card" id="second-tens">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front"><span class="digit">0</span></div>
+                    <div class="flip-card-back"><span class="digit">0</span></div>
+                </div>
+            </div>
+        </div>
+        <div class="flip-unit">
+            <div class="flip-card" id="second-ones">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front"><span class="digit">0</span></div>
+                    <div class="flip-card-back"><span class="digit">0</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            'use strict';
+
+            const PARTICLE_COUNT = 50;
+            const CONNECTION_DISTANCE = 120;
+            const SYNC_INTERVAL = 3600000;
+            const API_URL = 'https://api.m.taobao.com/rest/api3.do?api=mtop.common.getTimestamp';
+
+            let timeOffset = 0;
+            let lastTime = { h1: '', h2: '', m1: '', m2: '', s1: '', s2: '' };
+            let animationFrameId = null;
+            let syncIntervalId = null;
+
+            const canvas = document.getElementById('particles-canvas');
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            let canvasWidth = 0;
+            let canvasHeight = 0;
+
+            function resizeCanvas() {
+                canvasWidth = window.innerWidth;
+                canvasHeight = window.innerHeight;
+                canvas.width = canvasWidth;
+                canvas.height = canvasHeight;
+            }
+
+            function createParticle() {
+                return {
+                    x: Math.random() * canvasWidth,
+                    y: Math.random() * canvasHeight,
+                    vx: (Math.random() - 0.5) * 0.3,
+                    vy: (Math.random() - 0.5) * 0.3,
+                    radius: Math.random() * 1.5 + 0.5
+                };
+            }
+
+            function initParticles() {
+                particles = [];
+                for (let i = 0; i < PARTICLE_COUNT; i++) {
+                    particles.push(createParticle());
+                }
+            }
+
+            function updateParticles() {
+                for (let i = 0; i < particles.length; i++) {
+                    const p = particles[i];
+                    p.x += p.vx;
+                    p.y += p.vy;
+
+                    if (p.x < 0) p.x = canvasWidth;
+                    if (p.x > canvasWidth) p.x = 0;
+                    if (p.y < 0) p.y = canvasHeight;
+                    if (p.y > canvasHeight) p.y = 0;
+                }
+            }
+
+            function drawParticles() {
+                ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+
+                ctx.fillStyle = '#fff';
+                for (let i = 0; i < particles.length; i++) {
+                    const p = particles[i];
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+                ctx.lineWidth = 0.5;
+                for (let i = 0; i < particles.length; i++) {
+                    for (let j = i + 1; j < particles.length; j++) {
+                        const dx = particles[i].x - particles[j].x;
+                        const dy = particles[i].y - particles[j].y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+
+                        if (dist < CONNECTION_DISTANCE) {
+                            ctx.beginPath();
+                            ctx.moveTo(particles[i].x, particles[i].y);
+                            ctx.lineTo(particles[j].x, particles[j].y);
+                            ctx.stroke();
+                        }
+                    }
+                }
+            }
+
+            function animateParticles() {
+                updateParticles();
+                drawParticles();
+                animationFrameId = requestAnimationFrame(animateParticles);
+            }
+
+            async function syncTime() {
+                try {
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 3000);
+
+                    const response = await fetch(API_URL, {
+                        signal: controller.signal
+                    });
+                    clearTimeout(timeoutId);
+
+                    const text = await response.text();
+                    const match = text.match(/"t":"?(\d+)"?/);
+                    if (match) {
+                        const serverTime = parseInt(match[1], 10);
+                        timeOffset = serverTime - Date.now();
+                    }
+                } catch (e) {
+                    console.log('Using local time');
+                }
+            }
+
+            function getCurrentTime() {
+                const now = new Date(Date.now() + timeOffset);
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                const seconds = String(now.getSeconds()).padStart(2, '0');
+
+                return {
+                    h1: hours[0],
+                    h2: hours[1],
+                    m1: minutes[0],
+                    m2: minutes[1],
+                    s1: seconds[0],
+                    s2: seconds[1]
+                };
+            }
+
+            function flipCard(cardId, newValue) {
+                const card = document.getElementById(cardId);
+                if (!card) return;
+
+                const frontDigit = card.querySelector('.flip-card-front .digit');
+                const backDigit = card.querySelector('.flip-card-back .digit');
+
+                if (frontDigit.textContent === newValue) return;
+
+                const oldTopFlip = card.querySelector('.flip-card-top-flip');
+                const oldBottomFlip = card.querySelector('.flip-card-bottom-flip');
+                if (oldTopFlip) oldTopFlip.remove();
+                if (oldBottomFlip) oldBottomFlip.remove();
+
+                const topFlip = document.createElement('div');
+                topFlip.className = 'flip-card-top-flip';
+                topFlip.innerHTML = `<span class="digit">${frontDigit.textContent}</span>`;
+
+                const bottomFlip = document.createElement('div');
+                bottomFlip.className = 'flip-card-bottom-flip';
+                bottomFlip.innerHTML = `<span class="digit">${newValue}</span>`;
+
+                card.querySelector('.flip-card-inner').appendChild(topFlip);
+                card.querySelector('.flip-card-inner').appendChild(bottomFlip);
+
+                frontDigit.textContent = newValue;
+
+                requestAnimationFrame(() => {
+                    topFlip.classList.add('flip-animation-top');
+                });
+
+                setTimeout(() => {
+                    backDigit.textContent = newValue;
+                    bottomFlip.classList.add('flip-animation-bottom');
+                }, 300);
+
+                setTimeout(() => {
+                    if (topFlip.parentNode) topFlip.remove();
+                    if (bottomFlip.parentNode) bottomFlip.remove();
+                }, 600);
+            }
+
+            function updateClock() {
+                const time = getCurrentTime();
+
+                if (time.h1 !== lastTime.h1) flipCard('hour-tens', time.h1);
+                if (time.h2 !== lastTime.h2) flipCard('hour-ones', time.h2);
+                if (time.m1 !== lastTime.m1) flipCard('minute-tens', time.m1);
+                if (time.m2 !== lastTime.m2) flipCard('minute-ones', time.m2);
+                if (time.s1 !== lastTime.s1) flipCard('second-tens', time.s1);
+                if (time.s2 !== lastTime.s2) flipCard('second-ones', time.s2);
+
+                lastTime = time;
+            }
+
+            function init() {
+                resizeCanvas();
+                initParticles();
+                animateParticles();
+
+                const time = getCurrentTime();
+                document.querySelectorAll('.flip-card').forEach(card => {
+                    const frontDigit = card.querySelector('.flip-card-front .digit');
+                    const backDigit = card.querySelector('.flip-card-back .digit');
+                    const id = card.id;
+
+                    let val = '0';
+                    if (id === 'hour-tens') val = time.h1;
+                    else if (id === 'hour-ones') val = time.h2;
+                    else if (id === 'minute-tens') val = time.m1;
+                    else if (id === 'minute-ones') val = time.m2;
+                    else if (id === 'second-tens') val = time.s1;
+                    else if (id === 'second-ones') val = time.s2;
+
+                    frontDigit.textContent = val;
+                    backDigit.textContent = val;
+                });
+                lastTime = time;
+
+                setInterval(updateClock, 1000);
+
+                syncTime();
+                syncIntervalId = setInterval(syncTime, SYNC_INTERVAL);
+
+                window.addEventListener('resize', () => {
+                    resizeCanvas();
+                });
+            }
+
+            function cleanup() {
+                if (animationFrameId) {
+                    cancelAnimationFrame(animationFrameId);
+                }
+                if (syncIntervalId) {
+                    clearInterval(syncIntervalId);
+                }
+                particles = [];
+            }
+
+            window.addEventListener('beforeunload', cleanup);
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                init();
+            }
+        })();
+    </script>
+</body>
+</html>
