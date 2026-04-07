@@ -18,7 +18,7 @@
             align-items: center;
             background: #0a0a0a;
             overflow: hidden;
-            font-family: 'Century Gothic', 'CenturyGothic', AppleGothic, sans-serif;
+            font-family: 'Century Gothic', 'CenturyGothic';
         }
 
         #particles-canvas {
@@ -35,9 +35,9 @@
             position: relative;
             z-index: 1;
             display: flex;
-            gap: 8px;
+            gap: 16px;
             align-items: center;
-            animation: float 4s ease-in-out infinite;
+            animation: float 2s ease-in-out infinite;
         }
 
         @keyframes float {
@@ -53,9 +53,9 @@
 
         .flip-card {
             position: relative;
-            width: 75px;
-            height: 110px;
-            perspective: 400px;
+            width: 120px;
+            height: 176px;
+            perspective: 640px;
         }
 
         .flip-card-inner {
@@ -76,7 +76,7 @@
         .flip-card-front {
             top: 0;
             background: linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%);
-            border-radius: 8px 8px 0 0;
+            border-radius: 12px 12px 0 0;
             border: 1px solid #333;
             border-bottom: none;
             box-shadow: 0 -2px 4px rgba(255,255,255,0.05);
@@ -85,7 +85,7 @@
         .flip-card-back {
             bottom: 0;
             background: linear-gradient(180deg, #0d0d0d 0%, #1a1a1a 100%);
-            border-radius: 0 0 8px 8px;
+            border-radius: 0 0 12px 12px;
             border: 1px solid #333;
             border-top: none;
             box-shadow: 0 2px 4px rgba(0,0,0,0.5);
@@ -99,7 +99,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 78px;
+            font-size: 139px;
             font-weight: 500;
             color: #fff;
             text-shadow: 0 0 10px rgba(255,255,255,0.3);
@@ -127,7 +127,7 @@
         .flip-card-top-flip {
             top: 0;
             background: linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%);
-            border-radius: 8px 8px 0 0;
+            border-radius: 12px 12px 0 0;
             transform-origin: bottom;
             z-index: 2;
         }
@@ -135,7 +135,7 @@
         .flip-card-bottom-flip {
             bottom: 0;
             background: linear-gradient(180deg, #0d0d0d 0%, #1a1a1a 100%);
-            border-radius: 0 0 8px 8px;
+            border-radius: 0 0 12px 12px;
             transform-origin: top;
             transform: rotateX(90deg);
             z-index: 2;
@@ -186,13 +186,13 @@
         .separator {
             display: flex;
             flex-direction: column;
-            gap: 20px;
-            padding: 0 4px;
+            gap: 32px;
+            padding: 0 8px;
         }
 
         .separator-dot {
-            width: 8px;
-            height: 8px;
+            width: 13px;
+            height: 13px;
             background: #fff;
             border-radius: 50%;
             box-shadow: 0 0 10px rgba(255,255,255,0.5);
