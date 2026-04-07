@@ -25,6 +25,7 @@
 ### 方式一：直接打开
 
 直接用浏览器打开 `index.html` 文件即可。
+或者访问我的Pages: `https://chnhenry.github.io/simple-clock`
 
 ### 方式二：本地服务器
 
@@ -66,13 +67,13 @@ npx serve -l 8080
 
 | 设备 | 卡片尺寸 | 字体大小 |
 |------|---------|---------|
-| 桌面端 | 75px × 110px | 78px |
+| 桌面端 | 120px × 176px | 139px |
 | 移动端 | 48px × 70px | 52px |
 
 ## 🎨 字体
 
 - 主字体: Century Gothic
-- 备选字体: CenturyGothic, AppleGothic, sans-serif
+- 备选字体: CenturyGothic
 
 ## 📄 许可证
 
@@ -80,7 +81,7 @@ MIT License
 
 ## 🤖 AI 制作声明
 
-本项目完全使用 AI (Trae IDE + GLM-4.7) 辅助开发，包括：
+本项目完全使用 AI (Trae IDE + Seed2.0) 辅助开发，包括：
 - 代码编写与优化
 - 样式设计与调整
 - 动画效果实现
